@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">ChessProject</string>
+    <string name="title">CHESS</string>
+    <string name="playButton">Play</string>
+    <string name="aboutButton">About</string>
+    <string name="backButton">Back</string>
+    <string name="mainMenuButton">Main Menu</string>
+    <string name="aboutUsHead">About Us</string>
+    <string name="aboutUsBody">This is a two player chess app created by Benjamin Brewer, Nancy Zheng, Omar Ghafour, and Nikhil Rodrigo
+    for our EC327 final project</string>
+    <string name="instructions">Instructions</string>
+    <string name="instruction1">1) Press Play</string>
+    <string name="instruction2">2) Select piece to move</string>
+    <string name="instruction3">3) Select square to move piece to</string>
+    <string name="gameInfo">Game information</string>
+    <string name="gameInfo1">-White always goes first</string>
+    <string name="gameInfo2">-The board will flip every turn</string>
+    <string name="gameInfo3">-En passant has been disabled</string>
+
 </resources>
