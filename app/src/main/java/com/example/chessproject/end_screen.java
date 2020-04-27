@@ -7,16 +7,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public class about_page extends AppCompatActivity {
+public class end_screen extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about_page);
+        setContentView(R.layout.activity_end_screen);
 
-        Button buttonMainMenu = findViewById(R.id.mainMenuButton);
+        Button buttonPlayAgain = findViewById(R.id.playAgainButton);
 
-        buttonMainMenu.setOnClickListener(new View.OnClickListener() {
+        buttonPlayAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View V) {
                 moveToMainMenu();
@@ -25,7 +25,7 @@ public class about_page extends AppCompatActivity {
     }
 
     private void moveToMainMenu() {
-        Intent intent = new Intent(about_page.this, MainActivity.class);
+        Intent intent = new Intent(end_screen.this, MainActivity.class);
         startActivity(intent);
     }
 }

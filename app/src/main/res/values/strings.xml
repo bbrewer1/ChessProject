@@ -16,5 +16,6 @@
     <string name="gameInfo1">-White always goes first</string>
     <string name="gameInfo2">-The board will flip every turn</string>
     <string name="gameInfo3">-En passant has been disabled</string>
-
+    <string name="invisible"> </string>
+    <string name="playAgain">Play Again</string>
 </resources>
