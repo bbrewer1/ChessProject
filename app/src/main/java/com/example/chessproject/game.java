@@ -161,6 +161,7 @@ public class game extends AppCompatActivity implements View.OnClickListener {
         square86button.setOnClickListener(this);
         square87button.setOnClickListener(this);
         square88button.setOnClickListener(this);
+
     }
 
     static int kingPositionC = 59;
@@ -189,10 +190,10 @@ public class game extends AppCompatActivity implements View.OnClickListener {
         attemptedMove += v.getResources().getResourceName(v.getId()).substring(34);;
         if (moveConstructor == 1) {
             moveList = WpossibleMoves();
+
             if (moveList.contains(attemptedMove)) {
                 attemptedMove += " ";
                 if ("7371 ".equals(attemptedMove)) { //castle
-                    System.out.println("white kinda working");
                     WmakeMove("7371 ");
                     WmakeMove("7072 ");
                     findViewById(R.id.square70).setForeground(getResources().getDrawable(R.drawable.blank2));
@@ -209,10 +210,6 @@ public class game extends AppCompatActivity implements View.OnClickListener {
                     prev.setForeground(getResources().getDrawable(R.drawable.blank2));
                 }
                 String checkmateCheck = BpossibleMoves();
-                System.out.println("white king position: " + kingPositionC);
-                System.out.println("white king moves: " + kingWMoves);
-
-                //System.out.println("Is black king safe: " + BkingSafe());
                 if (checkmateCheck.length() == 0){
                     Intent intent = new Intent(game.this, end_screen.class);
                     startActivity(intent);
@@ -246,9 +243,6 @@ public class game extends AppCompatActivity implements View.OnClickListener {
                     prev.setForeground(getResources().getDrawable(R.drawable.blank2));
                 }
                 String checkmateCheck = WpossibleMoves();
-                System.out.println("black king position: " + kingPositionL);
-                System.out.println("black king moves: " + kingBMoves);
-                //System.out.println("Is white king safe: " + WkingSafe());
                 if (checkmateCheck.length() == 0){
                     Intent intent = new Intent(game.this, end_screen.class);
                     startActivity(intent);
@@ -281,41 +275,6 @@ public class game extends AppCompatActivity implements View.OnClickListener {
             {"P","P","P","P","P","P","P","P"},
             {"R","K","B","A","Q","B","K","R"}};
 
-
-
-    //flipBoard is used between turns, so that the functions don't need to be written from the lowercase perspective
-    public static void flipBoard(){
-        String temp;
-        /*for (int i=0; i<32; i++) {
-            int r = i/8;
-            int c = i%8;
-            if (Character.isUpperCase(chessBoard[r][c].charAt(0))) {
-                temp = chessBoard[r][c].toLowerCase();
-            } else {
-                temp = chessBoard[r][c].toUpperCase();
-            }
-            if (Character.isUpperCase(chessBoard[7-r][7-c].charAt(0))) {
-                chessBoard[r][c] = chessBoard[7-r][7-c].toLowerCase();
-            } else {
-                chessBoard[r][c] = chessBoard[7-r][7-c].toUpperCase();
-            }
-            chessBoard[7-r][7-c] = temp;
-        }
-        int kingTemp = kingPositionC;
-        kingPositionC = 63-kingPositionL;
-        kingPositionL = 63-kingTemp; */
-
-        for (int i=0; i<64; i++) {
-            int r = i/8;
-            int c = i%8;
-            if(Character.isUpperCase(chessBoard[r][c].charAt(0))) {
-                chessBoard[r][c].toLowerCase();
-            } else if (Character.isLowerCase(chessBoard[r][c].charAt(0))) {
-                chessBoard[r][c].toUpperCase();
-            }
-        }
-    }
-
     //makeMove changes the string matrix chessBoard to represent the move made
     //makes move for white pieces
     public static void WmakeMove(String move){
@@ -324,7 +283,7 @@ public class game extends AppCompatActivity implements View.OnClickListener {
             chessBoard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = chessBoard[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
             chessBoard[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
             //line below for flipBoard()
-            if("A".equals(chessBoard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))])) {
+            if("a".equals(chessBoard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))])) {
                 kingPositionC=8*Character.getNumericValue(move.charAt(2))+Character.getNumericValue(move.charAt(3));
                 kingWMoves++;
             }
@@ -418,7 +377,7 @@ public class game extends AppCompatActivity implements View.OnClickListener {
                 }
             } catch (Exception e) {}
             try {//promotion && capture
-                if (Character.isLowerCase(chessBoard[r-1][c+j].charAt(0)) && i<16) {
+                if (Character.isLowerCase(chessBoard[r-1][c+j].charAt(0)) && i>=16) {
                     String[] temp={"Q","R","B","K"};
                     for (int k=0; k<4; k++) {
                         oldPiece=chessBoard[r-1][c+j];
@@ -426,7 +385,7 @@ public class game extends AppCompatActivity implements View.OnClickListener {
                         chessBoard[r-1][c+j]=temp[k];
                         if (WkingSafe()) {
                             //column1,column2,captured-piece,new-piece,P
-                            list=list+c+(c+j)+oldPiece+temp[k]+"P";
+                            list=list+c+(c+j)+oldPiece+temp[k]+"p";
                         }
                         chessBoard[r][c]="P";
                         chessBoard[r-1][c+j]=oldPiece;
@@ -447,7 +406,7 @@ public class game extends AppCompatActivity implements View.OnClickListener {
             }
         } catch (Exception e) {}
         try {//promotion && no capture
-            if (" ".equals(chessBoard[r-1][c]) && i<16) {
+            if (" ".equals(chessBoard[r-1][c]) && i<47) {
                 String[] temp={"Q","R","B","K"};
                 for (int k=0; k<4; k++) {
                     oldPiece=chessBoard[r-1][c];
@@ -455,7 +414,7 @@ public class game extends AppCompatActivity implements View.OnClickListener {
                     chessBoard[r-1][c]=temp[k];
                     if (WkingSafe()) {
                         //column1,column2,captured-piece,new-piece,P
-                        list=list+c+c+oldPiece+temp[k]+"P";
+                        list=list+c+c+oldPiece+temp[k]+"p";
                     }
                     chessBoard[r][c]="P";
                     chessBoard[r-1][c]=oldPiece;
@@ -495,7 +454,7 @@ public class game extends AppCompatActivity implements View.OnClickListener {
                 }
             } catch (Exception e) {}
             try {//promotion && capture
-                if (Character.isUpperCase(chessBoard[r+1][c+j].charAt(0)) && i>47) {
+                if (Character.isUpperCase(chessBoard[r+1][c+j].charAt(0)) && i>=47) {
                     String[] temp={"q","r","b","k"};
                     for (int k=0; k<4; k++) {
                         oldPiece=chessBoard[r+1][c+j];
