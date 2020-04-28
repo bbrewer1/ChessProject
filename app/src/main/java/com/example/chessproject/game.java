@@ -165,6 +165,10 @@ public class game extends AppCompatActivity implements View.OnClickListener {
 
     static int kingPositionC = 59;
     static int kingPositionL = 3;
+    static int kingWMoves = 0;
+    static int kingBMoves = 0;
+    static int BCastleFlag = 0;
+    static int WCastleFlag = 0;
     //always keeps track of king position to evaluate check
     public static void main(String[] args) {
         while (!"A".equals(chessBoard[kingPositionC / 8][kingPositionC % 8])) {
@@ -187,13 +191,28 @@ public class game extends AppCompatActivity implements View.OnClickListener {
             moveList = WpossibleMoves();
             if (moveList.contains(attemptedMove)) {
                 attemptedMove += " ";
-                WmakeMove(attemptedMove);
-                v.setForeground(prev.getForeground());
-                prev.setForeground(getResources().getDrawable(R.drawable.blank2));
-
+                if ("7371 ".equals(attemptedMove)) { //castle
+                    System.out.println("white kinda working");
+                    WmakeMove("7371 ");
+                    WmakeMove("7072 ");
+                    findViewById(R.id.square70).setForeground(getResources().getDrawable(R.drawable.blank2));
+                    findViewById(R.id.square71).setForeground(getResources().getDrawable(R.drawable.white_king));
+                    findViewById(R.id.square72).setForeground(getResources().getDrawable(R.drawable.white_rook));
+                    findViewById(R.id.square73).setForeground(getResources().getDrawable(R.drawable.blank2));
+                    WCastleFlag = 1;
+                } else {
+                    WmakeMove(attemptedMove);
+                    if (" ".equals(chessBoard[7][0])) {
+                        WCastleFlag = 1;
+                    }
+                    v.setForeground(prev.getForeground());
+                    prev.setForeground(getResources().getDrawable(R.drawable.blank2));
+                }
                 String checkmateCheck = BpossibleMoves();
-                System.out.println("black king position: " + kingPositionL);
-                System.out.println("Is black king safe: " + BkingSafe());
+                System.out.println("white king position: " + kingPositionC);
+                System.out.println("white king moves: " + kingWMoves);
+
+                //System.out.println("Is black king safe: " + BkingSafe());
                 if (checkmateCheck.length() == 0){
                     Intent intent = new Intent(game.this, end_screen.class);
                     startActivity(intent);
@@ -209,12 +228,27 @@ public class game extends AppCompatActivity implements View.OnClickListener {
             moveList = BpossibleMoves();
             if (moveList.contains(attemptedMove)) {
                 attemptedMove += " ";
-                BmakeMove(attemptedMove);
-                v.setForeground(prev.getForeground());
-                prev.setForeground(getResources().getDrawable(R.drawable.blank2));
+                if ("0301 ".equals(attemptedMove)) { //castle
+                    System.out.println("kinda working");
+                    WmakeMove("0301 ");
+                    WmakeMove("0002 ");
+                    findViewById(R.id.square00).setForeground(getResources().getDrawable(R.drawable.blank2));
+                    findViewById(R.id.square01).setForeground(getResources().getDrawable(R.drawable.black_king));
+                    findViewById(R.id.square02).setForeground(getResources().getDrawable(R.drawable.black_rook));
+                    findViewById(R.id.square03).setForeground(getResources().getDrawable(R.drawable.blank2));
+                    BCastleFlag = 1;
+                } else {
+                    BmakeMove(attemptedMove);
+                    if (" ".equals(chessBoard[0][0])) {
+                        BCastleFlag = 1;
+                    }
+                    v.setForeground(prev.getForeground());
+                    prev.setForeground(getResources().getDrawable(R.drawable.blank2));
+                }
                 String checkmateCheck = WpossibleMoves();
-                System.out.println("white king position: " + kingPositionC);
-                System.out.println("Is white king safe: " + WkingSafe());
+                System.out.println("black king position: " + kingPositionL);
+                System.out.println("black king moves: " + kingBMoves);
+                //System.out.println("Is white king safe: " + WkingSafe());
                 if (checkmateCheck.length() == 0){
                     Intent intent = new Intent(game.this, end_screen.class);
                     startActivity(intent);
@@ -292,6 +326,7 @@ public class game extends AppCompatActivity implements View.OnClickListener {
             //line below for flipBoard()
             if("A".equals(chessBoard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))])) {
                 kingPositionC=8*Character.getNumericValue(move.charAt(2))+Character.getNumericValue(move.charAt(3));
+                kingWMoves++;
             }
         } else { //if pawn promotion
             //column1 column2 capturedPiece newPiece P
@@ -310,6 +345,7 @@ public class game extends AppCompatActivity implements View.OnClickListener {
             //line below for flipBoard()
             if("a".equals(chessBoard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))])) {
                 kingPositionL=8*Character.getNumericValue(move.charAt(2))+Character.getNumericValue(move.charAt(3));
+                kingBMoves++;
             }
         } else { //if pawn promotion
             //column1 column2 capturedPiece newPiece P
@@ -884,7 +920,21 @@ public class game extends AppCompatActivity implements View.OnClickListener {
                 } catch (Exception e) {}
             }
         }
-        //need to add casting later
+        if (WCastleFlag==0 && kingWMoves==0 && WkingSafe() && " ".equals(chessBoard[7][1]) && " ".equals(chessBoard[7][2])) {
+            chessBoard[7][0] = " ";
+            chessBoard[7][1] = "A";
+            chessBoard[7][2] = "R";
+            chessBoard[7][3] = " ";
+            kingPositionC = 57;
+            if (WkingSafe()) {
+                list = list + "7371 ";
+            }
+            kingPositionC = 59;
+            chessBoard[7][0] = "R";
+            chessBoard[7][1] = " ";
+            chessBoard[7][2] = " ";
+            chessBoard[7][3] = "A";
+        }
         return list;
     }
 
@@ -911,7 +961,21 @@ public class game extends AppCompatActivity implements View.OnClickListener {
                 } catch (Exception e) {}
             }
         }
-        //need to add castling later
+        if (BCastleFlag==0 && kingBMoves==0 && BkingSafe() && " ".equals(chessBoard[0][1]) && " ".equals(chessBoard[0][2])) {
+            chessBoard[0][0] = " ";
+            chessBoard[0][1] = "a";
+            chessBoard[0][2] = "r";
+            chessBoard[0][3] = " ";
+            kingPositionL = 1;
+            if (BkingSafe()) {
+                list = list + "0301 ";
+            }
+            kingPositionL = 3;
+            chessBoard[0][0] = "r";
+            chessBoard[0][1] = " ";
+            chessBoard[0][2] = " ";
+            chessBoard[0][3] = "a";
+        }
         return list;
     }
 
