@@ -171,19 +171,12 @@ public class game extends AppCompatActivity implements View.OnClickListener {
     public void onClick(View v){
         String moveList = possibleMoves();
         attemptedMove += v.getResources().getResourceName(v.getId()).substring(34);;
-        //System.out.println(attemptedMove);
-
-
         if (moveConstructor == 1) {
-            System.out.println(attemptedMove);
             if (moveList.contains(attemptedMove)) {
-                System.out.println(attemptedMove);
-                //System.out.print("it's working yeet");
                 attemptedMove += " ";
                 makeMove(attemptedMove);
                 v.setForeground(prev.getForeground());
                 prev.setForeground(getResources().getDrawable(R.drawable.blank2));
-                System.out.println(chessBoard);
             }
             attemptedMove = "";
             moveConstructor = 0;
@@ -199,7 +192,6 @@ public class game extends AppCompatActivity implements View.OnClickListener {
             Intent intent = new Intent(game.this, end_screen.class);
             startActivity(intent);
         }
-        //System.out.println(possibleMoves());
     }
 
     /* Chess board represented by string matrix
@@ -209,16 +201,18 @@ public class game extends AppCompatActivity implements View.OnClickListener {
      */
 
     static String chessBoard[][]={
-            {"r","k","b","q","a","b","k","r"},
+            {"r","k","b","a","q","b","k","r"},
             {"p","p","p","p","p","p","p","p"},
             {" "," "," "," "," "," "," "," "},
             {" "," "," "," "," "," "," "," "},
             {" "," "," "," "," "," "," "," "},
             {" "," "," "," "," "," "," "," "},
             {"P","P","P","P","P","P","P","P"},
-            {"R","K","B","Q","A","B","K","R"}};
+            {"R","K","B","A","Q","B","K","R"}};
 
-    static int kingPositionC, kingPositionL; //always keeps track of king position to evaluate check
+    static int kingPositionC = 0;
+    static int kingPositionL = 0;
+    //always keeps track of king position to evaluate check
     public static void main(String[] args) {
         while (!"A".equals(chessBoard[kingPositionC / 8][kingPositionC % 8])) {
             kingPositionC++;
@@ -285,7 +279,7 @@ public class game extends AppCompatActivity implements View.OnClickListener {
 
     //searches through every square on the board
     //returns a list of strings containing every possible move for the player
-    //move format: x1 y1 x2 y2 pieceCaptured (pieceCaptured is " " if moving to a blank space
+    //move format: row1 col1 row2 col2 pieceCaptured (pieceCaptured is " " if moving to a blank space
     public static String possibleMoves() {
         String list="";
         for (int i=0; i<64; i++) {
