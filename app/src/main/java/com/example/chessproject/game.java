@@ -164,25 +164,32 @@ public class game extends AppCompatActivity implements View.OnClickListener {
     }
 
     static String attemptedMove = "";
-    static String firstId;
+    View prev;
     static int moveConstructor = 0;
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onClick(View v){
         String moveList = possibleMoves();
-        System.out.println(moveList);
-        attemptedMove += v.getResources().getResourceName(v.getId()).charAt(6) + v.getResources().getResourceName(v.getId()).charAt(7);
-        System.out.println(attemptedMove);
-        moveConstructor++;
-        if (moveConstructor==1) {
-            firstId = v.getResources().getResourceName(v.getId());
-        } else if (moveConstructor == 2) {
-            if (moveList.contains(attemptedMove) && (moveList.indexOf(attemptedMove)%5 == 0)) {
-                v.setForeground(Drawable.createFromPath("@drawable/black_bishop"));
-            }
+        attemptedMove += v.getResources().getResourceName(v.getId()).substring(34);;
+        //System.out.println(attemptedMove);
 
+
+        if (moveConstructor == 1) {
+            System.out.println(attemptedMove);
+            if (moveList.contains(attemptedMove)) {
+                System.out.println(attemptedMove);
+                //System.out.print("it's working yeet");
+                attemptedMove += " ";
+                makeMove(attemptedMove);
+                v.setForeground(prev.getForeground());
+                prev.setForeground(getResources().getDrawable(R.drawable.blank2));
+                System.out.println(chessBoard);
+            }
             attemptedMove = "";
             moveConstructor = 0;
+        } else {
+            moveConstructor++;
+            prev = v;
         }
 
         //flipBoard();
@@ -192,7 +199,7 @@ public class game extends AppCompatActivity implements View.OnClickListener {
             Intent intent = new Intent(game.this, end_screen.class);
             startActivity(intent);
         }
-        System.out.println(possibleMoves());
+        //System.out.println(possibleMoves());
     }
 
     /* Chess board represented by string matrix
