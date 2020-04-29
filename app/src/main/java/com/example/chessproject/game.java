@@ -3,12 +3,10 @@ package com.example.chessproject;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.widget.Button;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 import android.content.Intent;
 
 public class game extends AppCompatActivity implements View.OnClickListener {
@@ -164,12 +162,13 @@ public class game extends AppCompatActivity implements View.OnClickListener {
 
     }
 
-    static int kingPositionC = 59;
-    static int kingPositionL = 3;
-    static int kingWMoves = 0;
-    static int kingBMoves = 0;
+    static int kingPositionC = 59; //tracks white king position
+    static int kingPositionL = 3; //tracks black king position
+    static int kingWMoves = 0; //tracks number of white king moves
+    static int kingBMoves = 0; //tracks number of black king moves
     static int BCastleFlag = 0;
     static int WCastleFlag = 0;
+
     //always keeps track of king position to evaluate check
     public static void main(String[] args) {
         while (!"A".equals(chessBoard[kingPositionC / 8][kingPositionC % 8])) {
@@ -183,15 +182,29 @@ public class game extends AppCompatActivity implements View.OnClickListener {
     static String attemptedMove = "";
     View prev;
     static int moveConstructor = 0;
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    public void onClick(View v){
+    public void onClick(View v) {
         String moveList = "";
-        attemptedMove += v.getResources().getResourceName(v.getId()).substring(34);;
+        attemptedMove += v.getResources().getResourceName(v.getId()).substring(34);
         if (moveConstructor == 1) {
             moveList = WpossibleMoves();
-
-            if (moveList.contains(attemptedMove)) {
+            System.out.println("White moves: " + moveList);
+            if (moveList.contains(attemptedMove + "U")) {
+                attemptedMove += "U";
+                WmakeMove(attemptedMove);
+                v.setForeground(getResources().getDrawable(R.drawable.white_queen));
+                prev.setForeground(getResources().getDrawable(R.drawable.blank2));
+                String checkmateCheck = WpossibleMoves();
+                if (checkmateCheck.length() == 0) {
+                    moveConstructor=0;
+                    Intent intent = new Intent(game.this, end_screen.class);
+                    startActivity(intent);
+                }
+                moveConstructor++;
+                attemptedMove = "";
+            } else if (moveList.contains(attemptedMove)) {
                 attemptedMove += " ";
                 if ("7371 ".equals(attemptedMove)) { //castle
                     WmakeMove("7371 ");
@@ -210,7 +223,8 @@ public class game extends AppCompatActivity implements View.OnClickListener {
                     prev.setForeground(getResources().getDrawable(R.drawable.blank2));
                 }
                 String checkmateCheck = BpossibleMoves();
-                if (checkmateCheck.length() == 0){
+                if (checkmateCheck.length() == 0) {
+                    moveConstructor=0;
                     Intent intent = new Intent(game.this, end_screen.class);
                     startActivity(intent);
                 }
@@ -223,12 +237,25 @@ public class game extends AppCompatActivity implements View.OnClickListener {
             attemptedMove = "";
         } else if (moveConstructor == 3) {
             moveList = BpossibleMoves();
-            if (moveList.contains(attemptedMove)) {
+            System.out.println("Black moves: " + moveList);
+            if (moveList.contains(attemptedMove + "u")){
+                attemptedMove += "u";
+                BmakeMove(attemptedMove);
+                v.setForeground(getResources().getDrawable(R.drawable.black_queen));
+                prev.setForeground(getResources().getDrawable(R.drawable.blank2));
+                String checkmateCheck = WpossibleMoves();
+                if (checkmateCheck.length() == 0) {
+                    moveConstructor=0;
+                    Intent intent = new Intent(game.this, end_screen.class);
+                    startActivity(intent);
+                }
+                moveConstructor = 0;
+                attemptedMove = "";
+            } else if (moveList.contains(attemptedMove)) {
                 attemptedMove += " ";
                 if ("0301 ".equals(attemptedMove)) { //castle
-                    System.out.println("kinda working");
-                    WmakeMove("0301 ");
-                    WmakeMove("0002 ");
+                    BmakeMove("0301 ");
+                    BmakeMove("0002 ");
                     findViewById(R.id.square00).setForeground(getResources().getDrawable(R.drawable.blank2));
                     findViewById(R.id.square01).setForeground(getResources().getDrawable(R.drawable.black_king));
                     findViewById(R.id.square02).setForeground(getResources().getDrawable(R.drawable.black_rook));
@@ -243,26 +270,33 @@ public class game extends AppCompatActivity implements View.OnClickListener {
                     prev.setForeground(getResources().getDrawable(R.drawable.blank2));
                 }
                 String checkmateCheck = WpossibleMoves();
-                if (checkmateCheck.length() == 0){
+                if (checkmateCheck.length() == 0) {
+                    moveConstructor=0;
                     Intent intent = new Intent(game.this, end_screen.class);
                     startActivity(intent);
                 }
                 moveConstructor = 0;
-                attemptedMove="";
-            } else{
+                attemptedMove = "";
+            } else {
                 moveConstructor = 2;
-                attemptedMove="";
+                attemptedMove = "";
             }
+
         } else {
             moveConstructor++;
             prev = v;
         }
     }
 
+
+
     /* Chess board represented by string matrix
     Uppercase = white pieces
     lowercase = black pieces
     A represents king
+
+     The string board changes with the one displayed to the user
+     Using the string board for the actual chess engine and then updating the interface saves a lot of time and annoying code
      */
 
     static String chessBoard[][]={
@@ -277,39 +311,37 @@ public class game extends AppCompatActivity implements View.OnClickListener {
 
     //makeMove changes the string matrix chessBoard to represent the move made
     //makes move for white pieces
-    public static void WmakeMove(String move){
-        if (move.charAt(4) != 'P') {
+    public void WmakeMove(String move){
+        if (move.charAt(4) != 'U') {
             //move format: x1 y1 x2 y2 capturedPiece
             chessBoard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = chessBoard[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
             chessBoard[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
-            //line below for flipBoard()
-            if("a".equals(chessBoard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))])) {
+
+            if("A".equals(chessBoard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))])) {
                 kingPositionC=8*Character.getNumericValue(move.charAt(2))+Character.getNumericValue(move.charAt(3));
                 kingWMoves++;
             }
         } else { //if pawn promotion
-            //column1 column2 capturedPiece newPiece P
-            chessBoard[1][Character.getNumericValue(move.charAt(0))] = " ";
-            chessBoard[0][Character.getNumericValue(move.charAt(1))] = String.valueOf(move.charAt(3));
+            chessBoard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = "Q";
+            chessBoard[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
         }
     }
 
     //makeMove changes the string matrix chessBoard to represent the move made
     //makes move for black pieces
     public static void BmakeMove(String move){
-        if (move.charAt(4) != 'P') {
+        if (move.charAt(4) != 'u') {
             //move format: x1 y1 x2 y2 capturedPiece
             chessBoard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = chessBoard[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))];
             chessBoard[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
-            //line below for flipBoard()
+
             if("a".equals(chessBoard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))])) {
                 kingPositionL=8*Character.getNumericValue(move.charAt(2))+Character.getNumericValue(move.charAt(3));
                 kingBMoves++;
             }
         } else { //if pawn promotion
-            //column1 column2 capturedPiece newPiece P
-            chessBoard[1][Character.getNumericValue(move.charAt(0))] = " ";
-            chessBoard[0][Character.getNumericValue(move.charAt(1))] = String.valueOf(move.charAt(3));
+            chessBoard[Character.getNumericValue(move.charAt(2))][Character.getNumericValue(move.charAt(3))] = "q";
+            chessBoard[Character.getNumericValue(move.charAt(0))][Character.getNumericValue(move.charAt(1))] = " ";
         }
     }
 
@@ -365,60 +397,38 @@ public class game extends AppCompatActivity implements View.OnClickListener {
         int r=i/8, c=i%8;
         for (int j=-1; j<=1; j+=2) {
             try {//capture
-                if (Character.isLowerCase(chessBoard[r-1][c+j].charAt(0)) && i>=16) {
+                if (Character.isLowerCase(chessBoard[r-1][c+j].charAt(0))) {
                     oldPiece=chessBoard[r-1][c+j];
                     chessBoard[r][c]=" ";
                     chessBoard[r-1][c+j]="P";
                     if (WkingSafe()) {
-                        list=list+r+c+(r-1)+(c+j)+oldPiece;
+                        list=list+r+c+(r-1)+(c+j);
+                        if (r-1 == 0) {
+                            list += "U";
+                        } else {
+                            list += " ";
+                        }
                     }
                     chessBoard[r][c]="P";
                     chessBoard[r-1][c+j]=oldPiece;
                 }
             } catch (Exception e) {}
-            try {//promotion && capture
-                if (Character.isLowerCase(chessBoard[r-1][c+j].charAt(0)) && i>=16) {
-                    String[] temp={"Q","R","B","K"};
-                    for (int k=0; k<4; k++) {
-                        oldPiece=chessBoard[r-1][c+j];
-                        chessBoard[r][c]=" ";
-                        chessBoard[r-1][c+j]=temp[k];
-                        if (WkingSafe()) {
-                            //column1,column2,captured-piece,new-piece,P
-                            list=list+c+(c+j)+oldPiece+temp[k]+"p";
-                        }
-                        chessBoard[r][c]="P";
-                        chessBoard[r-1][c+j]=oldPiece;
-                    }
-                }
-            } catch (Exception e) {}
         }
         try {//move one up
-            if (" ".equals(chessBoard[r-1][c]) && i>=16) {
+            if (" ".equals(chessBoard[r-1][c])) {
                 oldPiece=chessBoard[r-1][c];
                 chessBoard[r][c]=" ";
                 chessBoard[r-1][c]="P";
                 if (WkingSafe()) {
-                    list=list+r+c+(r-1)+c+oldPiece;
+                    list=list+r+c+(r-1)+c;
+                    if (r-1 == 0) {
+                        list += "U";
+                    } else {
+                        list += " ";
+                    }
                 }
                 chessBoard[r][c]="P";
                 chessBoard[r-1][c]=oldPiece;
-            }
-        } catch (Exception e) {}
-        try {//promotion && no capture
-            if (" ".equals(chessBoard[r-1][c]) && i<47) {
-                String[] temp={"Q","R","B","K"};
-                for (int k=0; k<4; k++) {
-                    oldPiece=chessBoard[r-1][c];
-                    chessBoard[r][c]=" ";
-                    chessBoard[r-1][c]=temp[k];
-                    if (WkingSafe()) {
-                        //column1,column2,captured-piece,new-piece,P
-                        list=list+c+c+oldPiece+temp[k]+"p";
-                    }
-                    chessBoard[r][c]="P";
-                    chessBoard[r-1][c]=oldPiece;
-                }
             }
         } catch (Exception e) {}
         try {//move two up
@@ -442,60 +452,38 @@ public class game extends AppCompatActivity implements View.OnClickListener {
         int r=i/8, c=i%8;
         for (int j=-1; j<=1; j+=2) {
             try {//capture
-                if (Character.isUpperCase(chessBoard[r+1][c+j].charAt(0)) && i<=47) {
+                if (Character.isUpperCase(chessBoard[r+1][c+j].charAt(0))) {
                     oldPiece=chessBoard[r+1][c+j];
                     chessBoard[r][c]=" ";
                     chessBoard[r+1][c+j]="p";
                     if (BkingSafe()) {
-                        list=list+r+c+(r+1)+(c+j)+oldPiece;
+                        list=list+r+c+(r+1)+(c+j);
+                        if (r+1 == 7) {
+                            list += "u";
+                        } else {
+                            list += " ";
+                        }
                     }
                     chessBoard[r][c]="p";
                     chessBoard[r+1][c+j]=oldPiece;
                 }
             } catch (Exception e) {}
-            try {//promotion && capture
-                if (Character.isUpperCase(chessBoard[r+1][c+j].charAt(0)) && i>=47) {
-                    String[] temp={"q","r","b","k"};
-                    for (int k=0; k<4; k++) {
-                        oldPiece=chessBoard[r+1][c+j];
-                        chessBoard[r][c]=" ";
-                        chessBoard[r+1][c+j]=temp[k];
-                        if (BkingSafe()) {
-                            //column1,column2,captured-piece,new-piece,P
-                            list=list+c+(c+j)+oldPiece+temp[k]+"p";
-                        }
-                        chessBoard[r][c]="p";
-                        chessBoard[r+1][c+j]=oldPiece;
-                    }
-                }
-            } catch (Exception e) {}
         }
         try {//move one up
-            if (" ".equals(chessBoard[r+1][c]) && i<=47) {
+            if (" ".equals(chessBoard[r+1][c])) {
                 oldPiece=chessBoard[r+1][c];
                 chessBoard[r][c]=" ";
                 chessBoard[r+1][c]="p";
                 if (BkingSafe()) {
-                    list=list+r+c+(r+1)+c+oldPiece;
+                    list=list+r+c+(r+1)+c;
+                    if (r+1 == 7) {
+                        list += "u";
+                    } else {
+                        list += " ";
+                    }
                 }
                 chessBoard[r][c]="p";
                 chessBoard[r+1][c]=oldPiece;
-            }
-        } catch (Exception e) {}
-        try {//promotion && no capture
-            if (" ".equals(chessBoard[r+1][c]) && i>47) {
-                String[] temp={"q","r","b","k"};
-                for (int k=0; k<4; k++) {
-                    oldPiece=chessBoard[r+1][c];
-                    chessBoard[r][c]=" ";
-                    chessBoard[r+1][c]=temp[k];
-                    if (BkingSafe()) {
-                        //column1,column2,captured-piece,new-piece,P
-                        list=list+c+c+oldPiece+temp[k]+"p";
-                    }
-                    chessBoard[r][c]="p";
-                    chessBoard[r+1][c]=oldPiece;
-                }
             }
         } catch (Exception e) {}
         try {//move two up
