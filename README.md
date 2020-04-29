@@ -8,8 +8,8 @@ A simple application that allows two individuals to play each other in a world-k
 
 ### How to run 
 On Android Studio:
-  -File -> New -> Project from version control -> git
-  -Paste the github link ()
+  *File -> New -> Project from version control -> git
+  *Paste the github link (https://github.com/bbrewer1/ChessProject.git)
 Use device emulator for any device with 28API or higher
 Click run
 
