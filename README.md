@@ -7,14 +7,14 @@ A simple application that allows two individuals to play each other in a world-k
 * Simple & easy to play
 
 ## How to run 
-* Open Android Studio: (can be downloaded at https://developer.android.com/studio)
+* Download and open Android Studio: (can be downloaded at https://developer.android.com/studio)
     * Select **Start a new Android Studio Project**
     * Select **No Activity**
-    * Name Your Application
+    * Name Your Application 
     * Choose **Java** for language and click **Finish**
-* Go all the way to the top of the your screen and click:
+* Go all the way to the top of the your screen and select:
     * File -> New -> Project From Version Control -> Git
-    * Paste the github link in the url section (https://github.com/bbrewer1/ChessProject.git)
+    * Paste the github link in the url section: (https://github.com/bbrewer1/ChessProject.git)
     * Choose an approporaite directory and select clone
     
 * **Note**: Use device emulator for any device with 28API or higher
