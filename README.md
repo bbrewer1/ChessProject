@@ -7,11 +7,11 @@ A simple application that allows two individuals to play each other in a world-k
 * Simple & easy to play
 
 ### How to run 
-On Android Studio:
+*On Android Studio:
   *File -> New -> Project from version control -> git
   *Paste the github link (https://github.com/bbrewer1/ChessProject.git)
-Use device emulator for any device with 28API or higher
-Click run
+*Use device emulator for any device with 28API or higher
+*Click run
 
 ### Authors
 * **Nancy Zheng** - *Project Lead* - [nancyzhe](https://github.com/nancyzhe)
